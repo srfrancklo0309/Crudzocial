@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-light">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shikaru</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/bulma@1.0.2/css/bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="../CSS/inbox.css">
+</head>
+
+<body>
+    <nav class="navbar has-shadow color-navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item size-navbar-item" href="#">
+                    <img class="size-img" src="../assets/logotipo-Photoroom.png" alt="Logo">
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="columns" id="mail-app">
+        <aside class="column is-2 aside hero is-fullheight color-aside">
+            <div>
+                <div class="main">
+                    <a href="#" class="item" data-src="./images.html">
+                        <span class="icon"><i class="fa fa-star"></i></span>
+                        <span class="name">Images</span>
+                    </a>
+                    <a href="#" class="item" data-src="./notes.html">
+                        <span class="icon"><i class="fa fa-envelope-o"></i></span>
+                        <span class="name">Notes</span>
+                    </a>
+                    <a href="#" class="item active" data-src="./logs.html">
+                        <span class="icon"><i class="fa fa-inbox"></i></span>
+                        <span class="name">Logs</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+        <div class="container-iframe">  
+            <div class="iframe-placeholder" id="iframe-placeholder">
+                Selecciona una opción del menú para ver el contenido
+            </div>
+            <iframe class="preview-app" id="preview-app" src="" frameborder="0" style="display: none;"></iframe>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="../apps/iframe.js"></script>
+</body>
+</html> 
