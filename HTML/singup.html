@@ -23,7 +23,7 @@
           <div class="field">
             <label class="label title-label">Username</label>
             <div class="control has-icons-right">
-              <input class="input" type="text" id="username">
+              <input class="input" type="text" id="username" required>
               <span class="icon is-small is-right">
                 <i class="fa fa-user"></i>
               </span>
@@ -33,7 +33,7 @@
           <div class="field">
             <label class="label title-label">Email</label>
             <div class="control has-icons-right">
-              <input class="input" type="text" id="email">
+              <input class="input" type="email" id="email" required>
               <span class="icon is-small is-right">
                 <i class="fa fa-envelope"></i>
               </span>
@@ -43,14 +43,14 @@
           <div class="field">
             <label class="label title-label">Password</label>
             <div class="control has-icons-right">
-              <input class="input" type="password" id="password">
+              <input class="input" type="password" id="password" required>
               <span class="icon is-small is-right">
                 <i class="fa fa-key"></i>
               </span>
             </div>
           </div>
           <div class="has-text-centered">
-            <a class="button is-vcentered is-primary is-outlined">Sign Up!</a>
+            <button class="button is-vcentered is-primary is-outlined" id="singupButton" type="button">Sign Up!</a>
           </div>
           <div class="has-text-centered">
             <a href="../index.html"> Already have an account? Log in now !</a>
@@ -63,6 +63,6 @@
     </div>
 
     <script src="../apps/singup.js"></script>
-    
+
   </body>
 </html>
