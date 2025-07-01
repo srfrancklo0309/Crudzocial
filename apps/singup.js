@@ -2,6 +2,8 @@ const usernameTag = document.getElementById('username');
 const passwordTag = document.getElementById('password');
 const emailTag = document.getElementById('email');
 const singupButton = document.getElementById('singupButton');
+const bottomRightNotification = document.getElementById('bottomRightNotification');
+const bottomRightNotificationText = document.getElementById('bottomRightNotificationText');
 
 // const existingUser = JSON.parse(localStorage.getItem('user'));
 let users = {};
@@ -18,20 +20,31 @@ function loadExistingUser(username) {
 }
 
 function isFilledFields(username, password, email) {
-    console.log(username, password, email);
     if (username === '' ) {
-        console.log('El nombre de usuario es requerido');
+        bottomRightNotificationText.textContent = 'El nombre de usuario es requerido';
+        bottomRightNotification.style.display = 'block';
+        setTimeout(() => {
+            bottomRightNotification.style.display = 'none';
+        }, 4000);
         usernameTag.focus();
         return false;
     }
     if (email === '' || !email.includes('@') || !email.includes('.')) {
-        console.log('El email es requerido');
+        bottomRightNotificationText.textContent = 'El email es requerido';
+        bottomRightNotification.style.display = 'block';
+        setTimeout(() => {
+            bottomRightNotification.style.display = 'none';
+        }, 4000);
         emailTag.value = '';
         emailTag.focus();
         return false;
     }
     if (password === '') {
-        console.log('La contraseña es requerida');
+        bottomRightNotificationText.textContent = 'La contraseña es requerida';
+        bottomRightNotification.style.display = 'block';
+        setTimeout(() => {
+            bottomRightNotification.style.display = 'none';
+        }, 4000);
         passwordTag.focus();
         return false;
     }
@@ -64,14 +77,19 @@ singupButton.addEventListener('click', () => {
     }
     
     if (users.hasOwnProperty(user.username)) {
-        alert('El usuario ya existe');
+        bottomRightNotificationText.textContent = 'El usuario ya existe';
+        bottomRightNotification.style.display = 'block';
+        setTimeout(() => {
+            bottomRightNotification.style.display = 'none';
+        }, 4000);
+        usernameTag.focus();
         return;
     }
 
     users[user.username] = user;    
     saveUsers();
     setTimeout(() => {
-        window.location.href = './home.html';
+        window.location.href = '../HTML/welcome.html';
     }, 1000);
 });
 

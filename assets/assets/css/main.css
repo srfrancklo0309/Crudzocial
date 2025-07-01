@@ -40,3 +40,12 @@ html{
 .columns{
   margin: 0px;
 }
+
+.bottom-right-notification {
+  display: none;
+  position: fixed;
+  bottom: 20px; 
+  right: 20px;  
+  z-index: 1000; 
+  width: 300px; 
+}

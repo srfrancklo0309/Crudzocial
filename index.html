@@ -24,7 +24,7 @@
           <div class="field">
             <label class="label title-label">Username</label>
             <div class="control has-icons-right">
-              <input class="input" type="text" >
+              <input class="input" type="text" id="username">
               <span class="icon is-small is-right">
                 <i class="fa fa-user"></i>
               </span>
@@ -34,23 +34,33 @@
           <div class="field">
             <label class="label title-label">Password</label>
             <div class="control has-icons-right">
-              <input class="input" type="password">
+              <input class="input" type="password" id="password">
               <span class="icon is-small is-right">
                 <i class="fa fa-key"></i>
               </span>
             </div>
           </div>
           <div class="has-text-centered">
-            <a class="button is-vcentered is-primary is-outlined" href="./HTML/welcome.html">Login</a>
+            <a class="button is-vcentered is-primary is-outlined" id="loginButton">Login</a>
           </div>
           <div class="has-text-centered">
             <a href="./HTML/singup.html"> Don't you have an account? Sign up now!</a>
           </div>
+          
         </section>
       </div>
+
+
+      <div class="bottom-right-notification" id="bottomRightNotificationLogin">
+        <div class="notification is-info" id="bottomRightNotificationTextLogin">
+          
+        </div>
+      </div>
+
       <div id="particles-js" class="interactive-bg column is-8">
       </div>
     </div>
 
+    <script src="./apps/login.js" type="module"></script>
   </body>
 </html>
