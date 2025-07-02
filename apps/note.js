@@ -1,4 +1,4 @@
-import { addUserLog, loadUserLogs } from './commons.js';
+import { addUserLog, loadUserLogs, activeUser } from './commons.js';
 
 const nuevaNotaBtn = document.getElementById('nuevaNotaBtn');
 const notasContainer = document.getElementById('notasContainer');
@@ -45,7 +45,7 @@ function cargarNotas() {
     if (notasGuardadas) {
         notas = JSON.parse(notasGuardadas);
     } else {
-        notas = []; // Si no hay notas, inicializar como array vacío
+        notas = {}; // Si no hay notas, inicializar como array vacío
     }
     renderizarNotas(); // Una vez cargadas, renderizarlas en la UI
 }
@@ -159,7 +159,7 @@ guardarNotaBtn.addEventListener('click', () => {
             notas[notaIndex].etiqueta = etiqueta;
             notas[notaIndex].tipoEtiqueta = tipoEtiqueta;
 
-            addUserLog(userLogs, 'Edición de nota', new Date().toISOString());
+            addUserLog(activeUser, 'Edición de nota', new Date().toISOString());
         }
     } else {
         // Crear nueva nota
@@ -172,7 +172,7 @@ guardarNotaBtn.addEventListener('click', () => {
             fechaCreacion: obtenerFechaActual()
         };
         notas.push(nuevaNota);
-        addUserLog(userLogs, 'Creación de nota', new Date().toISOString());
+        addUserLog(activeUser, 'Creación de nota', new Date().toISOString());
     }
 
     guardarNotas(); // Guardar en Local Storage
@@ -208,7 +208,7 @@ function agregarEventListenersNotas() {
                 notas = notas.filter(nota => nota.id !== id);
                 guardarNotas(); // Guardar en Local Storage
                 renderizarNotas(); // Actualizar la UI
-                addUserLog(userLogs, 'Eliminación de nota', new Date().toISOString());
+                addUserLog(activeUser, 'Eliminación de nota', new Date().toISOString());
             }
         });
     });
@@ -218,5 +218,5 @@ function agregarEventListenersNotas() {
 // Cargar notas al iniciar la aplicación
 document.addEventListener('DOMContentLoaded', () =>{ 
     cargarNotas();
-    loadUserLogs(userLogs);
+    loadUserLogs();
 });

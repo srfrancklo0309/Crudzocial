@@ -1,22 +1,32 @@
+let userLogs = {};
 
-function saveUserLogs(userLogs) {
-    localStorage.setItem(`userLogs`, JSON.stringify(userLogs));
+export let activeUser = sessionStorage.getItem('activeUser');
+    activeUser = JSON.parse(activeUser);
+    activeUser = activeUser.username;
+
+function saveUserLogs() {
+    localStorage.setItem('userLogs', JSON.stringify(userLogs));
 }
 
-export function addUserLog(userLogs, username, action, date) {
-    if (!userLogs[username]) {
-        userLogs[username] = [];
+export function addUserLog(activeUser, action, date) {
+    if (!userLogs[activeUser]) {
+        userLogs[activeUser] = [];
     }
-    userLogs[username].push({
+    userLogs[activeUser].push({
         'action': action,
         'date': date,
     });
-    saveUserLogs(userLogs);
+    saveUserLogs();
 }
 
-export function loadUserLogs( userLogs ) {
+export function loadUserLogs() {
     const userLogsInfo = JSON.parse(localStorage.getItem('userLogs'));
     if (userLogsInfo !== null) {
         userLogs = userLogsInfo;
     }
+    return userLogs;
+}
+
+export function getUserLogs(activeUser) {
+    return userLogs[activeUser] || [];
 }

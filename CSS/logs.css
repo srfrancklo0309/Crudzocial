@@ -1,0 +1,10 @@
+body {
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+.log-card {
+    margin-bottom: 15px;
+}
+.title.is-3{
+    color: #000;
+}

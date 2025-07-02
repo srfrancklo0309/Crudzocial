@@ -1,4 +1,4 @@
-import {addUserLog, loadUserLogs } from './commons.js';
+import {addUserLog, loadUserLogs, activeUser } from './commons.js';
 
 const usernameTag = document.getElementById('username');
 const passwordTag = document.getElementById('password');
@@ -99,7 +99,7 @@ singupButton.addEventListener('click', () => {
     }, 1000);
 
 
-    addUserLog(username, 'singup', new Date().toISOString());
+    addUserLog(username, 'Registro exitoso', new Date().toISOString());
 
 });
 

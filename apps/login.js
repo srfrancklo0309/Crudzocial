@@ -1,4 +1,4 @@
-import { addUserLog, loadUserLogs} from './commons.js';
+import { addUserLog, loadUserLogs, activeUser } from './commons.js';
 
 const usernameTag = document.getElementById('username');
 const passwordTag = document.getElementById('password');
@@ -13,7 +13,7 @@ let userLogs = {};
 
 document.addEventListener('DOMContentLoaded', () => {
     loadUsers();
-    loadUserLogs(userLogs);
+    loadUserLogs();
 });
 
 function loadUsers() {
@@ -82,9 +82,7 @@ loginButton.addEventListener('click', () => {
     if (isFilledFields(username, password) && isUserValid(username) && isPasswordValid(username, password)) {
         console.log('Inicio de sesion exitoso');
 
-        // addUserLog(username, 'login', new Date().toISOString());
-
-        console.log(addUserLog(userLogs,username, 'login', new Date().toISOString()));
+        addUserLog(username, 'Inicio de sesión exitoso', new Date().toISOString());
 
         sessionStorage.setItem('activeUser', JSON.stringify(users[username]));
 
