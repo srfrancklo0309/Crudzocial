@@ -3,7 +3,7 @@ let userLogs = {};
 export let activeUser = sessionStorage.getItem('activeUser');
     activeUser = JSON.parse(activeUser);
     
-console.log("Usuario activo:", activeUser.username);
+
 function saveUserLogs() {
     localStorage.setItem('userLogs', JSON.stringify(userLogs));
 }
