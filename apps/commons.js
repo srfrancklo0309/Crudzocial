@@ -2,17 +2,17 @@ let userLogs = {};
 
 export let activeUser = sessionStorage.getItem('activeUser');
     activeUser = JSON.parse(activeUser);
-    activeUser = activeUser.username;
-
+    
+console.log("Usuario activo:", activeUser.username);
 function saveUserLogs() {
     localStorage.setItem('userLogs', JSON.stringify(userLogs));
 }
 
 export function addUserLog(activeUser, action, date) {
-    if (!userLogs[activeUser]) {
-        userLogs[activeUser] = [];
+    if (!userLogs[activeUser.username]) {
+        userLogs[activeUser.username] = [];
     }
-    userLogs[activeUser].push({
+    userLogs[activeUser.username].push({
         'action': action,
         'date': date,
     });
@@ -28,5 +28,5 @@ export function loadUserLogs() {
 }
 
 export function getUserLogs(activeUser) {
-    return userLogs[activeUser] || [];
+    return userLogs[activeUser.username] || [];
 }

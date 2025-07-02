@@ -6,9 +6,9 @@ let AllUsersLogs = loadUserLogs();
 console.log("Todos los logs:", AllUsersLogs);
 
 function UserLogVerification(activeUser ){
-    console.log("Usuario activo:", activeUser);
-    if(AllUsersLogs.hasOwnProperty(activeUser)){
-        const UserLogs  = AllUsersLogs[activeUser];
+    console.log("Usuario activo:", activeUser.username);
+    if(AllUsersLogs.hasOwnProperty(activeUser.username)){
+        const UserLogs  = AllUsersLogs[activeUser.username];
         console.log("Logs del usuario:", UserLogs);
         renderLogs(UserLogs, activeUser);
     } else {
@@ -23,7 +23,7 @@ function renderLogs(ActualUserLog, activeUser){
             <div class="card">
                 <div class="card-content">
                     <div class="content">
-                        <strong>${log.date}</strong> - ${activeUser}: ${log.action}
+                        <strong>${log.date}</strong> - ${activeUser.username}: ${log.action}
                         <br>
                     </div>
                 </div>
@@ -35,6 +35,5 @@ function renderLogs(ActualUserLog, activeUser){
 document.addEventListener('DOMContentLoaded', () => {
     let activeUser = sessionStorage.getItem('activeUser');
     activeUser = JSON.parse(activeUser);
-    activeUser = activeUser.username;
     UserLogVerification(activeUser);
 });
