@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notas</title>
+    <title>Mis Notas</title>
     <link rel="stylesheet" href="https://unpkg.com/bulma@1.0.2/css/bulma.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
@@ -17,6 +17,10 @@
         .note-actions {
             margin-top: 10px;
         }
+        /* Estilos para el modal personalizado si es necesario, aunque Bulma ya los tiene */
+        .modal-card-foot {
+            justify-content: flex-end; /* Alinea los botones a la derecha */
+        }
     </style>
 </head>
 <body>
@@ -25,7 +29,7 @@
         
         <div class="field">
             <div class="control">
-                <button class="button is-success">
+                <button id="nuevaNotaBtn" class="button is-success">
                     <span class="icon">
                         <i class="fa fa-plus"></i>
                     </span>
@@ -34,149 +38,67 @@
             </div>
         </div>
         
-        <div class="note-card">
-            <div class="card">
-                <header class="card-header">
-                    <p class="card-header-title">
-                        Recordatorio importante
-                    </p>
-                    <div class="card-header-icon">
-                        <span class="tag is-info">Urgente</span>
-                    </div>
-                </header>
-                <div class="card-content">
-                    <div class="content">
-                        Revisar el proyecto antes del viernes. Necesito completar la documentación y preparar la presentación para el cliente.
-                        <br>
-                        <small class="has-text-grey">Creada: 15/01/2024</small>
-                    </div>
-                </div>
-                <footer class="card-footer">
-                    <a href="#" class="card-footer-item">
-                        <span class="icon">
-                            <i class="fa fa-edit"></i>
-                        </span>
-                        Editar
-                    </a>
-                    <a href="#" class="card-footer-item">
-                        <span class="icon">
-                            <i class="fa fa-trash"></i>
-                        </span>
-                        Eliminar
-                    </a>
-                </footer>
-            </div>
+        <div id="notasContainer">
         </div>
-        
-        <div class="note-card">
-            <div class="card">
-                <header class="card-header">
-                    <p class="card-header-title">
-                        Ideas para el proyecto
-                    </p>
-                    <div class="card-header-icon">
-                        <span class="tag is-warning">En progreso</span>
-                    </div>
-                </header>
-                <div class="card-content">
-                    <div class="content">
-                        - Implementar sistema de notificaciones
-                        - Mejorar la interfaz de usuario
-                        - Agregar funcionalidad de búsqueda
-                        - Optimizar el rendimiento
-                        <br>
-                        <small class="has-text-grey">Creada: 14/01/2024</small>
+
+    </div>
+
+    <div id="notaModal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title" id="modalTitle">Nueva Nota</p>
+                <button class="delete" aria-label="close" id="closeModalBtn"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="field">
+                    <label class="label" for="notaTitulo">Título</label>
+                    <div class="control">
+                        <input class="input" type="text" id="notaTitulo" placeholder="Título de la nota" required>
                     </div>
                 </div>
-                <footer class="card-footer">
-                    <a href="#" class="card-footer-item">
-                        <span class="icon">
-                            <i class="fa fa-edit"></i>
-                        </span>
-                        Editar
-                    </a>
-                    <a href="#" class="card-footer-item">
-                        <span class="icon">
-                            <i class="fa fa-trash"></i>
-                        </span>
-                        Eliminar
-                    </a>
-                </footer>
-            </div>
-        </div>
-        
-        <div class="note-card">
-            <div class="card">
-                <header class="card-header">
-                    <p class="card-header-title">
-                        Reunión de equipo
-                    </p>
-                    <div class="card-header-icon">
-                        <span class="tag is-success">Completada</span>
-                    </div>
-                </header>
-                <div class="card-content">
-                    <div class="content">
-                        Puntos discutidos en la reunión:
-                        - Nuevas funcionalidades a implementar
-                        - Distribución de tareas
-                        - Fechas límite del proyecto
-                        <br>
-                        <small class="has-text-grey">Creada: 13/01/2024</small>
+
+                <div class="field">
+                    <label class="label" for="notaContenido">Contenido</label>
+                    <div class="control">
+                        <textarea class="textarea" id="notaContenido" placeholder="Contenido de la nota" rows="5" required></textarea>
                     </div>
                 </div>
-                <footer class="card-footer">
-                    <a href="#" class="card-footer-item">
-                        <span class="icon">
-                            <i class="fa fa-edit"></i>
-                        </span>
-                        Editar
-                    </a>
-                    <a href="#" class="card-footer-item">
-                        <span class="icon">
-                            <i class="fa fa-trash"></i>
-                        </span>
-                        Eliminar
-                    </a>
-                </footer>
-            </div>
-        </div>
-        
-        <div class="note-card">
-            <div class="card">
-                <header class="card-header">
-                    <p class="card-header-title">
-                        Contraseñas importantes
-                    </p>
-                    <div class="card-header-icon">
-                        <span class="tag is-danger">Privada</span>
-                    </div>
-                </header>
-                <div class="card-content">
-                    <div class="content">
-                        Servidor de desarrollo: dev-server.local
-                        Base de datos: mysql-dev
-                        API Key: ****************
-                        <br>
-                        <small class="has-text-grey">Creada: 12/01/2024</small>
+
+                <div class="field">
+                    <label class="label" for="notaEtiqueta">Etiqueta (Ej: Urgente, En progreso, Completada, Privada)</label>
+                    <div class="control">
+                        <input class="input" type="text" id="notaEtiqueta" placeholder="Etiqueta opcional">
                     </div>
                 </div>
-                <footer class="card-footer">
-                    <a href="#" class="card-footer-item">
-                        <span class="icon">
-                            <i class="fa fa-edit"></i>
-                        </span>
-                        Editar
-                    </a>
-                    <a href="#" class="card-footer-item">
-                        <span class="icon">
-                            <i class="fa fa-trash"></i>
-                        </span>
-                        Eliminar
-                    </a>
-                </footer>
-            </div>
+                
+                <div class="field">
+                    <label class="label" for="notaTipoEtiqueta">Tipo de Etiqueta (color)</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select id="notaTipoEtiqueta">
+                                <option value="is-info">Urgente (Azul)</option>
+                                <option value="is-warning">En progreso (Amarillo)</option>
+                                <option value="is-success">Completada (Verde)</option>
+                                <option value="is-danger">Privada (Rojo)</option>
+                                <option value="is-primary">Primaria (Morado)</option>
+                                <option value="is-link">Enlace (Azul Claro)</option>
+                                <option value="is-dark">Oscuro (Negro)</option>
+                                <option value="is-light">Claro (Gris)</option>
+                                <option value="">Ninguna</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" id="guardarNotaBtn">Guardar cambios</button>
+                <button class="button" id="cancelarModalBtn">Cancelar</button>
+            </footer>
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
-</html> 
+</html>
