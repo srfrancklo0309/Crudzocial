@@ -1,3 +1,5 @@
+import { addUserLog, loadUserLogs } from './commons.js';
+
 const nuevaNotaBtn = document.getElementById('nuevaNotaBtn');
 const notasContainer = document.getElementById('notasContainer');
 const notaModal = document.getElementById('notaModal');
@@ -13,6 +15,9 @@ const notaTipoEtiquetaSelect = document.getElementById('notaTipoEtiqueta');
 
 // Variable global para almacenar las notas
 let notas = [];
+
+let userLogs = {};
+
 // Variable para saber si estamos editando una nota existente o creando una nueva
 let notaEditandoId = null;
 
@@ -153,6 +158,8 @@ guardarNotaBtn.addEventListener('click', () => {
             notas[notaIndex].contenido = contenido;
             notas[notaIndex].etiqueta = etiqueta;
             notas[notaIndex].tipoEtiqueta = tipoEtiqueta;
+
+            addUserLog(userLogs, 'Edición de nota', new Date().toISOString());
         }
     } else {
         // Crear nueva nota
@@ -165,6 +172,7 @@ guardarNotaBtn.addEventListener('click', () => {
             fechaCreacion: obtenerFechaActual()
         };
         notas.push(nuevaNota);
+        addUserLog(userLogs, 'Creación de nota', new Date().toISOString());
     }
 
     guardarNotas(); // Guardar en Local Storage
@@ -200,6 +208,7 @@ function agregarEventListenersNotas() {
                 notas = notas.filter(nota => nota.id !== id);
                 guardarNotas(); // Guardar en Local Storage
                 renderizarNotas(); // Actualizar la UI
+                addUserLog(userLogs, 'Eliminación de nota', new Date().toISOString());
             }
         });
     });
@@ -207,4 +216,7 @@ function agregarEventListenersNotas() {
 
 // --- Inicialización ---
 // Cargar notas al iniciar la aplicación
-document.addEventListener('DOMContentLoaded', cargarNotas);
+document.addEventListener('DOMContentLoaded', () =>{ 
+    cargarNotas();
+    loadUserLogs(userLogs);
+});
