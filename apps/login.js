@@ -1,12 +1,20 @@
+import { addUserLog, loadUserLogs} from './commons.js';
+
 const usernameTag = document.getElementById('username');
 const passwordTag = document.getElementById('password');
 const loginButton = document.getElementById('loginButton');
 const bottomRightNotificationLogin = document.getElementById('bottomRightNotificationLogin');
 const bottomRightNotificationTextLogin = document.getElementById('bottomRightNotificationTextLogin');
 
+const userLog = usernameTag.value
 
 let users = {};
-loadUsers();
+let userLogs = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadUsers();
+    loadUserLogs(userLogs);
+});
 
 function loadUsers() {
     const usersInfo = JSON.parse(localStorage.getItem('users'));
@@ -73,7 +81,13 @@ loginButton.addEventListener('click', () => {
     const password = passwordTag.value;
     if (isFilledFields(username, password) && isUserValid(username) && isPasswordValid(username, password)) {
         console.log('Inicio de sesion exitoso');
-        
+
+        // addUserLog(username, 'login', new Date().toISOString());
+
+        console.log(addUserLog(userLogs,username, 'login', new Date().toISOString()));
+
+        sessionStorage.setItem('activeUser', JSON.stringify(users[username]));
+
         window.location.href = '../HTML/welcome.html';
     }
 });

@@ -1,3 +1,5 @@
+import {addUserLog, loadUserLogs } from './commons.js';
+
 const usernameTag = document.getElementById('username');
 const passwordTag = document.getElementById('password');
 const emailTag = document.getElementById('email');
@@ -5,8 +7,11 @@ const singupButton = document.getElementById('singupButton');
 const bottomRightNotification = document.getElementById('bottomRightNotification');
 const bottomRightNotificationText = document.getElementById('bottomRightNotificationText');
 
-// const existingUser = JSON.parse(localStorage.getItem('user'));
+const userLog = usernameTag.value
+
 let users = {};
+
+let userLogs = {};
 
 function loadUsers() {
     const usersInfo = JSON.parse(localStorage.getItem('users'));
@@ -90,16 +95,18 @@ singupButton.addEventListener('click', () => {
     saveUsers();
     setTimeout(() => {
         window.location.href = '../HTML/welcome.html';
+        sessionStorage.setItem('activeUser', JSON.stringify(users[username]));
     }, 1000);
+
+
+    addUserLog(username, 'singup', new Date().toISOString());
+
 });
 
 document.addEventListener('DOMContentLoaded', () => {
     loadUsers();
+    loadUserLogs();
 });
-
-
-
-
 
 
 
