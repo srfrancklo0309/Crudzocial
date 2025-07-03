@@ -1,90 +1,172 @@
-// Funcionalidad para manejar imágenes
+import {addUserLog, loadUserLogs} from "./commons.js";
+
+// Image management functionality
 class ImageManager {
     constructor() {
+        this.currentUser = this.getCurrentUser();
         this.images = this.loadImages();
         this.init();
     }
 
-    // Cargar imágenes desde localStorage
+    // Get current user from sessionStorage
+    getCurrentUser() {
+        const activeUser = sessionStorage.getItem('activeUser');
+        console.log('Active user in sessionStorage:', activeUser);
+        
+        if (!activeUser) {
+            // If no active user, redirect to login
+            console.log('No active user, redirecting to login...');
+            window.location.href = '../HTML/singup.html';
+            return null;
+        }
+        
+        const userData = JSON.parse(activeUser);
+        console.log('User loaded:', userData);
+        return userData;
+    }
+
+    // Load images from localStorage (only from current user)
     loadImages() {
         const savedImages = localStorage.getItem('userImages');
-        return savedImages ? JSON.parse(savedImages) : [];
+        const allImages = savedImages ? JSON.parse(savedImages) : [];
+        
+        // Filter only images from current user
+        if (this.currentUser) {
+            return allImages.filter(image => image.username === this.currentUser.username);
+        }
+        return [];
     }
 
-    // Guardar imágenes en localStorage
+    // Save images to localStorage
     saveImages() {
-        localStorage.setItem('userImages', JSON.stringify(this.images));
+        // Get all existing images
+        const activeUser = sessionStorage.getItem('activeUser');
+        const savedImages = localStorage.getItem('userImages');
+        const allImages = savedImages ? JSON.parse(savedImages) : [];
+        
+        // Filter images from other users
+        const otherUsersImages = allImages.filter(image => image.username !== this.currentUser.username);
+        
+        // Combine other users' images with current user's images
+        const updatedImages = [...otherUsersImages, ...this.images];
+        
+        if (activeUser) {
+            const userData = JSON.parse(activeUser);
+            addUserLog(userData, "Image saved", new Date().toISOString());
+        }
+
+        localStorage.setItem('userImages', JSON.stringify(updatedImages));
     }
 
-    // Inicializar la aplicación
+    // Initialize the application
     init() {
+        if (!this.currentUser) {
+            return; // Don't initialize if no user
+        }
         this.renderImages();
         this.setupEventListeners();
     }
 
-    // Configurar event listeners
+    // Setup event listeners
     setupEventListeners() {
+        console.log('Setting up event listeners...');
         const uploadButton = document.getElementById('uploadButton');
         const fileInput = document.getElementById('fileInput');
         
+        console.log('uploadButton found:', !!uploadButton);
+        console.log('fileInput found:', !!fileInput);
+        
         if (uploadButton) {
             uploadButton.addEventListener('click', () => {
+                console.log('Upload button clicked');
                 fileInput.click();
             });
         }
 
         if (fileInput) {
             fileInput.addEventListener('change', (e) => {
+                console.log('Files selected:', e.target.files);
                 this.handleFileUpload(e.target.files);
             });
         }
     }
 
-    // Manejar la subida de archivos
+    // Handle file upload
     handleFileUpload(files) {
+        console.log('handleFileUpload called with files:', files);
         Array.from(files).forEach(file => {
+            console.log('Processing file:', file.name, 'Type:', file.type);
             if (file.type.startsWith('image/')) {
+                console.log('File is image, calling addImage...');
                 this.addImage(file);
             } else {
-                this.showNotification('Por favor, selecciona solo archivos de imagen.', 'is-danger');
+                console.log('File is not image, showing error...');
+                this.showNotification('Please select only image files.', 'is-danger');
             }
         });
     }
 
-    // Añadir una nueva imagen
+    // Add a new image
     addImage(file) {
+        console.log('Starting addImage with file:', file.name);
+        const activeUser = sessionStorage.getItem('activeUser');
         const reader = new FileReader();
+        
         reader.onload = (e) => {
+            console.log('File read successfully');
             const imageData = {
                 id: Date.now() + Math.random(),
                 name: file.name,
                 size: this.formatFileSize(file.size),
-                date: new Date().toLocaleDateString('es-ES'),
+                date: new Date().toLocaleDateString('en-US'),
                 dataUrl: e.target.result,
-                type: file.type
+                type: file.type,
+                username: this.currentUser.username // Add user username
             };
 
+            console.log('Image data created:', imageData);
             this.images.unshift(imageData);
+            console.log('Image added to array, total images:', this.images.length);
+            
             this.saveImages();
             this.renderImages();
-            this.showNotification(`Imagen "${file.name}" añadida exitosamente.`, 'is-success');
+            this.showNotification(`Image "${file.name}" added successfully.`, 'is-success');
+            
+            // Log after adding image
+            if (activeUser) {
+                const userData = JSON.parse(activeUser);
+                addUserLog(userData, "Image Added", new Date().toISOString());
+            }
         };
+        
+        reader.onerror = (error) => {
+            console.error('Error reading file:', error);
+            this.showNotification('Error processing image.', 'is-danger');
+        };
+        
         reader.readAsDataURL(file);
     }
 
-    // Eliminar una imagen
+    // Remove an image
     removeImage(imageId) {
+        const activeUser = sessionStorage.getItem('activeUser');
         const imageIndex = this.images.findIndex(img => img.id === imageId);
         if (imageIndex !== -1) {
             const imageName = this.images[imageIndex].name;
             this.images.splice(imageIndex, 1);
             this.saveImages();
             this.renderImages();
-            this.showNotification(`Imagen "${imageName}" eliminada exitosamente.`, 'is-info');
+            this.showNotification(`Image "${imageName}" removed successfully.`, 'is-info');
+            
+            // Log after removing image
+            if (activeUser) {
+                const userData = JSON.parse(activeUser);
+                addUserLog(userData, "Image removed", new Date().toISOString());
+            }
         }
     }
 
-    // Renderizar las imágenes en la interfaz
+    // Render images in the interface
     renderImages() {
         const imageGrid = document.getElementById('imageGrid');
         if (!imageGrid) return;
@@ -92,8 +174,8 @@ class ImageManager {
         if (this.images.length === 0) {
             imageGrid.innerHTML = `
                 <div class="has-text-centered" style="grid-column: 1 / -1; padding: 40px;">
-                    <p class="has-text-grey">No hay imágenes en la galería</p>
-                    <p class="has-text-grey is-size-7">Haz clic en "Subir Nueva Imagen" para comenzar</p>
+                    <p class="has-text-grey">No images in your gallery</p>
+                    <p class="has-text-grey is-size-7">Click on "Upload New Image" to start</p>
                 </div>
             `;
             return;
@@ -119,7 +201,7 @@ class ImageManager {
         `).join('');
     }
 
-    // Formatear el tamaño del archivo
+    // Format file size
     formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -128,7 +210,7 @@ class ImageManager {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    // Mostrar notificaciones
+    // Show notifications
     showNotification(message, type = 'is-info') {
         const notification = document.createElement('div');
         notification.className = `notification ${type} is-light`;
@@ -140,7 +222,7 @@ class ImageManager {
         const container = document.querySelector('.container');
         container.insertBefore(notification, container.firstChild);
         
-        // Auto-eliminar después de 3 segundos
+        // Auto-remove after 3 seconds
         setTimeout(() => {
             if (notification.parentElement) {
                 notification.remove();
@@ -148,16 +230,16 @@ class ImageManager {
         }, 3000);
     }
 
-    // Abrir modal de imagen
+    // Open image modal
     openModal(imageIndex) {
         this.currentImageIndex = imageIndex;
         this.createModal();
         this.showModal();
     }
 
-    // Crear modal
+    // Create modal
     createModal() {
-        // Eliminar modal existente si hay uno
+        // Remove existing modal if there is one
         const existingModal = document.getElementById('imageModal');
         if (existingModal) {
             existingModal.remove();
@@ -191,10 +273,10 @@ class ImageManager {
 
         document.body.appendChild(modal);
         
-        // Cerrar modal con ESC
+        // Close modal with ESC
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
         
-        // Cerrar modal haciendo clic fuera de la imagen
+        // Close modal by clicking outside the image
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 this.closeModal();
@@ -202,7 +284,7 @@ class ImageManager {
         });
     }
 
-    // Mostrar modal
+    // Show modal
     showModal() {
         const modal = document.getElementById('imageModal');
         if (modal) {
@@ -210,7 +292,7 @@ class ImageManager {
         }
     }
 
-    // Cerrar modal
+    // Close modal
     closeModal() {
         const modal = document.getElementById('imageModal');
         if (modal) {
@@ -222,7 +304,7 @@ class ImageManager {
         document.removeEventListener('keydown', this.handleKeyDown.bind(this));
     }
 
-    // Imagen anterior
+    // Previous image
     prevImage() {
         if (this.images.length > 1) {
             this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
@@ -231,7 +313,7 @@ class ImageManager {
         }
     }
 
-    // Imagen siguiente
+    // Next image
     nextImage() {
         if (this.images.length > 1) {
             this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
@@ -240,7 +322,7 @@ class ImageManager {
         }
     }
 
-    // Manejar teclas
+    // Handle keys
     handleKeyDown(e) {
         switch(e.key) {
             case 'Escape':
@@ -256,7 +338,59 @@ class ImageManager {
     }
 }
 
-// Inicializar el gestor de imágenes cuando el DOM esté listo
+// Export class for module use
+export { ImageManager };
+
+// Initialize image manager when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     window.imageManager = new ImageManager();
+    
+    // Setup drag and drop
+    const dragArea = document.getElementById('dragArea');
+    const fileInput = document.getElementById('fileInput');
+
+    if (dragArea && fileInput) {
+        // Prevent default browser behavior
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        // Highlight drop area
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dragArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        // Handle dropped files
+        dragArea.addEventListener('drop', handleDrop, false);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            dragArea.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            dragArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (window.imageManager) {
+                window.imageManager.handleFileUpload(files);
+            }
+        }
+    }
+    
+    // Load user logs
+    const userLogs = loadUserLogs();
 }); 
