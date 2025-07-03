@@ -1,4 +1,4 @@
-import { addUserLog, loadUserLogs, activeUser } from './commons.js';
+import { addUserLog, loadUserLogs, activeUser, updateActiveUser } from './commons.js';
 
 const nuevaNotaBtn = document.getElementById('nuevaNotaBtn');
 const notasContainer = document.getElementById('notasContainer');
@@ -13,7 +13,7 @@ const notaContenidoTextarea = document.getElementById('notaContenido');
 const notaEtiquetaInput = document.getElementById('notaEtiqueta');
 const notaTipoEtiquetaSelect = document.getElementById('notaTipoEtiqueta');
 
-// Variable global para almacenar las notas
+// Variable global para almacenar las notas del usuario actual
 let notas = [];
 
 let userLogs = {};
@@ -21,23 +21,38 @@ let userLogs = {};
 // Variable para saber si estamos editando una nota existente o creando una nueva
 let notaEditandoId = null;
 
+// Función para obtener la clave de notas del usuario actual
+function getNotasKey() {
+    if (!activeUser || !activeUser.username) {
+        console.error('No hay usuario activo');
+        return null;
+    }
+    return `notas_${activeUser.username}`;
+}
+
 // Función para limpiar y validar datos corruptos
 function limpiarDatosCorruptos() {
     try {
-        const notasGuardadas = localStorage.getItem('notas');
+        const notasKey = getNotasKey();
+        if (!notasKey) return [];
+        
+        const notasGuardadas = localStorage.getItem(notasKey);
         if (notasGuardadas) {
             const parsedNotas = JSON.parse(notasGuardadas);
             // Si las notas no son un array, limpiar y crear uno nuevo
             if (!Array.isArray(parsedNotas)) {
                 console.warn('Datos de notas corruptos detectados, limpiando...');
-                localStorage.removeItem('notas');
+                localStorage.removeItem(notasKey);
                 return [];
             }
             return parsedNotas;
         }
     } catch (error) {
         console.error('Error al cargar notas:', error);
-        localStorage.removeItem('notas');
+        const notasKey = getNotasKey();
+        if (notasKey) {
+            localStorage.removeItem(notasKey);
+        }
         return [];
     }
     return [];
@@ -63,13 +78,23 @@ function obtenerFechaActual() {
 
 // Cargar notas desde Local Storage
 function cargarNotas() {
+    if (!activeUser || !activeUser.username) {
+        console.warn('No hay usuario activo, no se pueden cargar notas');
+        notas = [];
+        renderizarNotas();
+        return;
+    }
+    
     notas = limpiarDatosCorruptos();
     renderizarNotas(); // Una vez cargadas, renderizarlas en la UI
 }
 
 // Guardar notas en Local Storage
 function guardarNotas() {
-    localStorage.setItem('notas', JSON.stringify(notas));
+    const notasKey = getNotasKey();
+    if (notasKey) {
+        localStorage.setItem(notasKey, JSON.stringify(notas));
+    }
 }
 
 // --- Renderizado de Notas ---
@@ -121,6 +146,12 @@ function crearHtmlNota(nota) {
 // Función para renderizar todas las notas
 function renderizarNotas() {
     notasContainer.innerHTML = ''; // Limpiar el contenedor actual
+    
+    if (!activeUser || !activeUser.username) {
+        notasContainer.innerHTML = '<p class="has-text-centered has-text-grey">Debe iniciar sesión para ver sus notas.</p>';
+        return;
+    }
+    
     if (notas.length === 0) {
         notasContainer.innerHTML = '<p class="has-text-centered has-text-grey">No hay notas. ¡Cree una nueva!</p>';
         return;
@@ -137,6 +168,11 @@ function renderizarNotas() {
 
 // Abre el modal para una nueva nota
 nuevaNotaBtn.addEventListener('click', () => {
+    if (!activeUser || !activeUser.username) {
+        alert('Debe iniciar sesión para crear notas.');
+        return;
+    }
+    
     modalTitle.textContent = "Nueva Nota";
     notaTituloInput.value = '';
     notaContenidoTextarea.value = '';
@@ -157,6 +193,11 @@ cancelarModalBtn.addEventListener('click', () => {
 
 // Guarda la nota (nueva o editada)
 guardarNotaBtn.addEventListener('click', () => {
+    if (!activeUser || !activeUser.username) {
+        alert('Debe iniciar sesión para guardar notas.');
+        return;
+    }
+    
     const titulo = notaTituloInput.value.trim();
     const contenido = notaContenidoTextarea.value.trim();
     const etiqueta = notaEtiquetaInput.value.trim();
@@ -186,7 +227,8 @@ guardarNotaBtn.addEventListener('click', () => {
             contenido: contenido,
             etiqueta: etiqueta,
             tipoEtiqueta: tipoEtiqueta,
-            fechaCreacion: obtenerFechaActual()
+            fechaCreacion: obtenerFechaActual(),
+            usuario: activeUser.username // Agregar información del usuario
         };
         notas.push(nuevaNota);
         addUserLog(activeUser, 'Creación de nota', new Date().toISOString());
@@ -235,7 +277,14 @@ function agregarEventListenersNotas() {
 // Cargar notas al iniciar la aplicación
 document.addEventListener('DOMContentLoaded', () =>{ 
     console.log('Inicializando sistema de notas...');
-    cargarNotas();
     loadUserLogs();
-    console.log('Sistema de notas inicializado. Notas cargadas:', notas.length);
+    updateActiveUser(); // Actualizar el usuario activo
+    cargarNotas();
+    console.log('Sistema de notas inicializado. Usuario:', activeUser?.username, 'Notas cargadas:', notas.length);
 });
+
+// Función para recargar notas cuando cambie el usuario (puede ser llamada desde otros archivos)
+export function recargarNotasUsuario() {
+    updateActiveUser(); // Actualizar el usuario activo antes de recargar
+    cargarNotas();
+}
