@@ -21,6 +21,28 @@ let userLogs = {};
 // Variable para saber si estamos editando una nota existente o creando una nueva
 let notaEditandoId = null;
 
+// Función para limpiar y validar datos corruptos
+function limpiarDatosCorruptos() {
+    try {
+        const notasGuardadas = localStorage.getItem('notas');
+        if (notasGuardadas) {
+            const parsedNotas = JSON.parse(notasGuardadas);
+            // Si las notas no son un array, limpiar y crear uno nuevo
+            if (!Array.isArray(parsedNotas)) {
+                console.warn('Datos de notas corruptos detectados, limpiando...');
+                localStorage.removeItem('notas');
+                return [];
+            }
+            return parsedNotas;
+        }
+    } catch (error) {
+        console.error('Error al cargar notas:', error);
+        localStorage.removeItem('notas');
+        return [];
+    }
+    return [];
+}
+
 // --- Funciones de Utilidad ---
 
 // Función para generar un ID único (simple para este ejemplo)
@@ -41,12 +63,7 @@ function obtenerFechaActual() {
 
 // Cargar notas desde Local Storage
 function cargarNotas() {
-    const notasGuardadas = localStorage.getItem('notas');
-    if (notasGuardadas) {
-        notas = JSON.parse(notasGuardadas);
-    } else {
-        notas = {}; // Si no hay notas, inicializar como array vacío
-    }
+    notas = limpiarDatosCorruptos();
     renderizarNotas(); // Una vez cargadas, renderizarlas en la UI
 }
 
@@ -217,6 +234,8 @@ function agregarEventListenersNotas() {
 // --- Inicialización ---
 // Cargar notas al iniciar la aplicación
 document.addEventListener('DOMContentLoaded', () =>{ 
+    console.log('Inicializando sistema de notas...');
     cargarNotas();
     loadUserLogs();
+    console.log('Sistema de notas inicializado. Notas cargadas:', notas.length);
 });
