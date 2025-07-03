@@ -10,16 +10,16 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title is-3">Galería de Imágenes</h1>
+        <h1 class="title is-3">Galeria de Imagenes</h1>
         
         <div class="upload-section">
             <div class="field">
-                <label class="label">Subir Imágenes</label>
+                <label class="label">Subir Imagenes</label>
                 <div class="control">
                     <div class="drag-area" id="dragArea">
                         <div class="content">
                             <i class="fas fa-cloud-upload-alt fa-3x has-text-grey-light"></i>
-                            <p class="has-text-grey mt-3">Arrastra y suelta imágenes aquí o</p>
+                            <p class="has-text-grey mt-3">Arrastra y suelta imagenes aqui o</p>
                             <button class="button is-primary" id="uploadButton">
                                 <span class="icon">
                                     <i class="fas fa-upload"></i>
@@ -30,62 +30,15 @@
                     </div>
                     <input type="file" id="fileInput" class="file-input" multiple accept="image/*">
                 </div>
-                <p class="help">Formatos soportados: JPG, PNG, GIF, SVG. Tamaño máximo: 10MB por imagen.</p>
+        
             </div>
         </div>
         
         <div class="image-grid" id="imageGrid">
-            <!-- Las imágenes se cargarán dinámicamente aquí -->
+            <!-- Las imagenes se cargarán aca -->
         </div>
     </div>
 
-    <script src="../apps/images.js"></script>
-    <script>
-        // Funcionalidad adicional para drag and drop
-        document.addEventListener('DOMContentLoaded', () => {
-            const dragArea = document.getElementById('dragArea');
-            const fileInput = document.getElementById('fileInput');
-
-            // Prevenir comportamiento por defecto del navegador
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dragArea.addEventListener(eventName, preventDefaults, false);
-                document.body.addEventListener(eventName, preventDefaults, false);
-            });
-
-            // Resaltar área de drop
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dragArea.addEventListener(eventName, highlight, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dragArea.addEventListener(eventName, unhighlight, false);
-            });
-
-            // Manejar archivos soltados
-            dragArea.addEventListener('drop', handleDrop, false);
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            function highlight(e) {
-                dragArea.classList.add('dragover');
-            }
-
-            function unhighlight(e) {
-                dragArea.classList.remove('dragover');
-            }
-
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                
-                if (window.imageManager) {
-                    window.imageManager.handleFileUpload(files);
-                }
-            }
-        });
-    </script>
+    <script src="../apps/images.js" type="module"></script>
 </body>
 </html>
