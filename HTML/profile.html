@@ -4,8 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
+    <link rel="stylesheet" href="../CSS/profile.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/bulma@1.0.2/css/bulma.min.css" />
+    <style>
+      body, html {
+        font-family: 'Open Sans', Arial, sans-serif;
+      }
+    </style>
 </head>
 <body>
-    
+    <section class="section">
+        <div class="container">
+            <h1 class="title is-3 has-text-centered">Perfil de Usuario</h1>
+            <div class="box" style="max-width: 600px; margin: 0 auto;">
+                <form>
+                    <div class="field">
+                        <label class="label">Nombres</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Ingresa tus nombres">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Apellidos</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Ingresa tus apellidos">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Correo Electrónico</label>
+                        <div class="control">
+                            <input class="input" type="email" placeholder="Ingresa tu correo electrónico">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Teléfono</label>
+                        <div class="control">
+                            <input class="input" type="tel" placeholder="Ingresa tu teléfono">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">País</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Ingresa tu país">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Ciudad</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Ingresa tu ciudad">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Dirección</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Ingresa tu dirección">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Código Postal</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Ingresa tu código postal">
+                        </div>
+                    </div>
+                    <div class="field is-grouped is-grouped-centered">
+                        <div class="control">
+                            <button class="button is-primary" type="submit">Actualizar</button>
+                        </div>
+                    </div>
+                    <div class="field is-grouped is-grouped-centered">
+                        <div class="control">
+                            <a class="button is-black" href="home.html">Ir a Home</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
 </body>
+<script src="../apps/profile.js" type="module"></script>
 </html>
